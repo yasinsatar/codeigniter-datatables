@@ -69,7 +69,6 @@ class DatatablesColumn
 				} else {
 					$key = (self::$as) ?: self::$column;
 					$row[$key] = call_user_func($callback, null, $row);
-					//$columnData = call_user_func($callback, null, $row);
 				}
 			}
 		} else {
