@@ -291,17 +291,6 @@ class Datatables
 
 				$columnName = $column['as'] ?: $column['column'];
 				$row[$columnName] = $records[$i][$columnName];
-
-				/*if (!empty($column['column']) && preg_match('/^\(.+\)$/u', $columnName)) {
-					$row[$column['as']] = $records[$i][$columnName];
-				}
-				if (key_exists('as',$column) && key_exists($column['as'], $records[$i]) && $columnName !== $column['as']) {
-					$row[$column['as']] = $records[$i][$column['as']];
-				}
-				if (!empty($column['column']) && key_exists('custom', $column)) {
-					$row[$column['column']] = $records[$i][$columnName];
-				}*/
-
 			}
 			$out[] = $row;
 		}
