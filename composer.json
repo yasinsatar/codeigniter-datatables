@@ -1,5 +1,5 @@
 {
-  "name": "yasinsatar/ci_datatables",
+  "name": "yasinsatar/codeigniter-datatables",
   "description": "This project was developed to integrate the server-side capabilities of the DataTables library with the CodeIgniter framework.",
   "authors": [
     {
