@@ -65,7 +65,6 @@ class Datatables_model extends CI_Model
         }
 
         self::bindSelect();
-        self::$db->stop_cache();
         self::execute();
     }
 
@@ -82,9 +81,8 @@ class Datatables_model extends CI_Model
     /**
      * @return void
      */
-    private static function all()
+    private static function ordersAndLimit()
     {
-        self::search();
         foreach (Datatables::getOrders() as $column => $type) {
             self::$db->order_by($column, $type);
         }
@@ -99,7 +97,7 @@ class Datatables_model extends CI_Model
     private static function search(): void
     {
         Datatables::filter();
-        if (Datatables::getColumnSearch() && Datatables::getGlobalSearch()) {
+        if (Datatables::getColumnSearch()) {
             foreach (Datatables::getColumnSearch() as $column => $data) {
                 $escapedValue = self::$db->escape($data["value"]);
                 if ((bool)$data["regex"] === true) {
@@ -108,21 +106,9 @@ class Datatables_model extends CI_Model
                     self::$db->where($column, $escapedValue);
                 }
             }
-            self::$db->group_start();
-            foreach (Datatables::getGlobalSearch() as $column => $data) {
-                $escapedValue = self::$db->escape_like_str($data);
-                self::$db->or_like($column, $escapedValue, 'both', FALSE);
-            }
-            self::$db->group_end();
-        } else {
-            foreach (Datatables::getColumnSearch() as $column => $data) {
-                $escapedValue = self::$db->escape($data["value"]);
-                if ((bool)$data["regex"] === true) {
-                    self::$db->where("$column REGEXP ", urldecode($escapedValue), FALSE);
-                } else {
-                    self::$db->where($column, $escapedValue);
-                }
-            }
+        }
+        
+        if (Datatables::getGlobalSearch()) {
             self::$db->group_start();
             foreach (Datatables::getGlobalSearch() as $column => $data) {
                 $escapedValue = self::$db->escape_like_str($data);
@@ -166,13 +152,10 @@ class Datatables_model extends CI_Model
         Datatables::setRecordsTotal(self::$db->count_all_results());
         self::search();
         Datatables::setRecordsFiltered(self::$db->count_all_results());
-        self::all();
+        self::ordersAndLimit();
         $records = self::$db->get()->result_array();
+        self::$db->stop_cache();
         self::$db->flush_cache();
         Datatables::setRecords($records);
     }
-
-
 }
-
-
